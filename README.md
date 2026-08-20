@@ -52,6 +52,55 @@ python3 main.py
 - `Ctrl+C`나 입력 스트림 종료로 중단되어도 데이터를 저장하고 정상적으로 끝냅니다.
 - `state.json`이 없으면 기본 퀴즈로 시작하고, 파일이 손상된 경우 안내 후 기본 퀴즈로 복구합니다.
 
+## 실행 화면
+
+### 개발 환경
+
+`git config --local --list`로 저장소에 설정된 계정을 확인한 화면과 파이썬 버전입니다.
+
+![Git 설정 확인](docs/screenshots/01_env_git_config.png)
+
+![Python 버전](docs/screenshots/02_env_python_version.png)
+
+### 퀴즈 풀기
+
+문제 수를 고르면 무작위 순서로 출제됩니다. 정답 대신 `0`을 누르면 힌트가 나옵니다.
+
+![퀴즈 풀기](docs/screenshots/03_play_start.png)
+
+한 판이 끝나면 맞힌 개수와 점수, 힌트 차감분, 최고 점수 갱신 여부를 보여줍니다.
+
+![풀이 결과](docs/screenshots/04_play_result.png)
+
+### 퀴즈 추가
+
+문제·선택지 4개·정답 번호·힌트를 입력받아 목록에 넣고 바로 저장합니다.
+추가한 뒤 목록을 조회하면 7번으로 들어가 있습니다.
+
+![퀴즈 추가와 목록](docs/screenshots/05_add_quiz.png)
+
+### 퀴즈 삭제
+
+빈 입력을 넣으면 안내 후 다시 묻고, 번호를 고르면 지운 뒤 목록에 반영됩니다.
+
+![퀴즈 삭제](docs/screenshots/06_delete_quiz.png)
+
+### 점수 확인
+
+최고 점수와 최근 게임 기록 5개를 보여줍니다.
+
+![점수와 기록](docs/screenshots/07_score_history.png)
+
+### 중단 처리
+
+`Ctrl+C`로 중단해도 안내 메시지를 출력하고 데이터를 저장한 뒤 종료합니다.
+
+![중단 시 저장 후 종료](docs/screenshots/08_interrupt.png)
+
+### 코드 구조
+
+![코드 구조](docs/screenshots/09_code_overview.png)
+
 ## 파일 구조
 
 ```
@@ -62,6 +111,8 @@ E1-2/
 ├── storage.py      기본 퀴즈 데이터와 state.json 읽기/쓰기
 ├── state.json      실행 중 생성되는 데이터 파일 (아래 설명)
 ├── .gitignore      파이썬 표준 템플릿 + state.json
+├── docs/
+│   └── screenshots/  실행 화면 캡처
 └── README.md
 ```
 
