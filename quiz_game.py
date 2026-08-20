@@ -78,6 +78,10 @@ class QuizGame:
         score = round(correct / total * 100)
         print("=" * 40)
         print(f"결과: {total}문제 중 {correct}문제 정답! ({score}점)")
+
+        if score > self.best_score:
+            self.best_score = score
+            print("새로운 최고 점수입니다!")
         print("=" * 40 + "\n")
 
     def add_quiz(self):
@@ -105,6 +109,13 @@ class QuizGame:
             print(f"[{number}] {quiz.question}")
         print("-" * 40 + "\n")
 
+    def show_score(self):
+        """최고 점수를 보여준다."""
+        if self.best_score == 0:
+            print("\n아직 퀴즈를 풀지 않았습니다. 먼저 퀴즈를 풀어 보세요.\n")
+            return
+        print(f"\n최고 점수: {self.best_score}점\n")
+
     def run(self):
         self.show_title()
         while True:
@@ -118,7 +129,7 @@ class QuizGame:
             elif picked == 3:
                 self.list_quizzes()
             elif picked == 4:
-                print("\n아직 준비 중인 기능입니다.\n")
+                self.show_score()
             elif picked == 5:
                 print("\n게임을 종료합니다.\n")
                 break
