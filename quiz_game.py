@@ -1,5 +1,6 @@
 """메뉴 흐름과 게임 진행을 담당하는 모듈."""
 
+import datetime
 import random
 
 import storage
@@ -41,10 +42,10 @@ def ask_text(prompt):
 
 
 class QuizGame:
-    """퀴즈 목록과 최고 점수를 들고 게임 전체를 진행하는 클래스."""
+    """퀴즈 목록과 점수 기록을 들고 게임 전체를 진행하는 클래스."""
 
     def __init__(self):
-        self.quizzes, self.best_score, self.loaded = storage.load_state()
+        self.quizzes, self.best_score, self.history, self.loaded = storage.load_state()
 
     def show_title(self):
         print("=" * 40)
@@ -59,7 +60,8 @@ class QuizGame:
         print("2. 퀴즈 추가")
         print("3. 퀴즈 목록")
         print("4. 점수 확인")
-        print("5. 종료")
+        print("5. 퀴즈 삭제")
+        print("6. 종료")
         print("=" * 40)
 
     def play(self):
@@ -109,7 +111,13 @@ class QuizGame:
             print("새로운 최고 점수입니다!")
         print("=" * 40 + "\n")
 
+        self.record_history(count, score)
         self.save()
+
+    def record_history(self, count, score):
+        """이번 판의 날짜, 푼 문제 수, 점수를 기록에 남긴다."""
+        played_at = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+        self.history.append({"played_at": played_at, "count": count, "score": score})
 
     def add_quiz(self):
         """새 퀴즈를 입력받아 목록에 넣고 파일에 저장한다."""
@@ -138,22 +146,46 @@ class QuizGame:
             print(f"[{number}] {quiz.question}")
         print("-" * 40 + "\n")
 
+    def delete_quiz(self):
+        """번호를 골라 퀴즈를 목록에서 지운다."""
+        if not self.quizzes:
+            print("\n삭제할 퀴즈가 없습니다.\n")
+            return
+
+        self.list_quizzes()
+        number = ask_number("삭제할 퀴즈 번호 (0: 취소): ", 0, len(self.quizzes))
+        if number == 0:
+            print("\n취소했습니다.\n")
+            return
+
+        removed = self.quizzes.pop(number - 1)
+        self.save()
+        print(f"\n삭제했습니다: {removed.question}\n")
+
     def show_score(self):
-        """최고 점수를 보여준다."""
-        if self.best_score == 0:
+        """최고 점수와 최근 게임 기록을 보여준다."""
+        if self.best_score == 0 and not self.history:
             print("\n아직 퀴즈를 풀지 않았습니다. 먼저 퀴즈를 풀어 보세요.\n")
             return
+
         print(f"\n최고 점수: {self.best_score}점\n")
 
+        if self.history:
+            print("최근 기록")
+            print("-" * 40)
+            for record in self.history[-5:]:
+                print(f"{record['played_at']}   {record['count']}문제   {record['score']}점")
+            print("-" * 40 + "\n")
+
     def save(self):
-        """현재 퀴즈 목록과 최고 점수를 state.json에 저장한다."""
-        return storage.save_state(self.quizzes, self.best_score)
+        """현재 퀴즈 목록과 점수 기록을 state.json에 저장한다."""
+        return storage.save_state(self.quizzes, self.best_score, self.history)
 
     def run(self):
         self.show_title()
         while True:
             self.show_menu()
-            picked = ask_number("선택: ", 1, 5)
+            picked = ask_number("선택: ", 1, 6)
 
             if picked == 1:
                 self.play()
@@ -164,6 +196,8 @@ class QuizGame:
             elif picked == 4:
                 self.show_score()
             elif picked == 5:
+                self.delete_quiz()
+            elif picked == 6:
                 self.save()
                 print("\n게임을 종료합니다. 데이터를 저장했습니다.\n")
                 break

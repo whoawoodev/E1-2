@@ -68,10 +68,10 @@ def load_state():
 
     파일이 없으면 기본 퀴즈로 시작하고,
     파일이 깨져 있으면 안내한 뒤 기본 퀴즈로 복구한다.
-    돌려주는 값: (퀴즈 목록, 최고 점수, 불러오기 성공 여부)
+    돌려주는 값: (퀴즈 목록, 최고 점수, 게임 기록, 불러오기 성공 여부)
     """
     if not os.path.exists(STATE_FILE):
-        return make_default_quizzes(), 0, False
+        return make_default_quizzes(), 0, [], False
 
     try:
         with open(STATE_FILE, "r", encoding="utf-8") as f:
@@ -83,22 +83,24 @@ def load_state():
             quizzes.append(Quiz(data["question"], data["choices"], data["answer"],
                                 data.get("hint", "")))
         best_score = int(state["best_score"])
+        history = state.get("history", [])
 
         if not quizzes:
             raise ValueError("저장된 퀴즈가 하나도 없습니다.")
 
-        return quizzes, best_score, True
+        return quizzes, best_score, history, True
 
     except (json.JSONDecodeError, KeyError, TypeError, ValueError, OSError):
         print("저장 파일을 읽을 수 없어 기본 퀴즈로 시작합니다.")
-        return make_default_quizzes(), 0, False
+        return make_default_quizzes(), 0, [], False
 
 
-def save_state(quizzes, best_score):
-    """퀴즈 목록과 최고 점수를 state.json에 UTF-8로 저장한다."""
+def save_state(quizzes, best_score, history):
+    """퀴즈 목록, 최고 점수, 게임 기록을 state.json에 UTF-8로 저장한다."""
     state = {
         "quizzes": [q.to_dict() for q in quizzes],
         "best_score": best_score,
+        "history": history,
     }
     try:
         with open(STATE_FILE, "w", encoding="utf-8") as f:
