@@ -178,6 +178,10 @@ E1-2/
 
 - 복제본에서 수정한 내용을 원래 작업 폴더로 pull 받아 확인했습니다.
 
+`git log --oneline --graph` 결과입니다. 커밋 22개와 `feature/play` 갈래가 병합된 자리가 그래프로 남아 있습니다.
+
+![git log --oneline --graph](docs/screenshots/10_git_log.png)
+
 ## 코드 구조 및 설계
 
 ### Quiz와 QuizGame의 책임을 어떻게 나눴나
