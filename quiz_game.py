@@ -1,6 +1,7 @@
 """메뉴 흐름과 게임 진행을 담당하는 모듈."""
 
 import storage
+from quiz import Quiz
 
 
 def ask_number(prompt, low, high):
@@ -79,6 +80,19 @@ class QuizGame:
         print(f"결과: {total}문제 중 {correct}문제 정답! ({score}점)")
         print("=" * 40 + "\n")
 
+    def add_quiz(self):
+        """새 퀴즈를 입력받아 목록에 넣고 파일에 저장한다."""
+        print("\n새로운 퀴즈를 추가합니다.\n")
+
+        question = ask_text("문제를 입력하세요: ")
+        choices = []
+        for i in range(1, 5):
+            choices.append(ask_text(f"선택지 {i}: "))
+        answer = ask_number("정답 번호 (1-4): ", 1, 4)
+
+        self.quizzes.append(Quiz(question, choices, answer))
+        print(f"\n퀴즈가 추가되었습니다! (현재 {len(self.quizzes)}개)\n")
+
     def run(self):
         self.show_title()
         while True:
@@ -88,7 +102,7 @@ class QuizGame:
             if picked == 1:
                 self.play()
             elif picked == 2:
-                print("\n아직 준비 중인 기능입니다.\n")
+                self.add_quiz()
             elif picked == 3:
                 print("\n아직 준비 중인 기능입니다.\n")
             elif picked == 4:
