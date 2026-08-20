@@ -40,13 +40,15 @@ class QuizGame:
     """퀴즈 목록과 최고 점수를 들고 게임 전체를 진행하는 클래스."""
 
     def __init__(self):
-        self.quizzes = storage.make_default_quizzes()
-        self.best_score = 0
+        self.quizzes, self.best_score, self.loaded = storage.load_state()
 
     def show_title(self):
         print("=" * 40)
         print("             이산수학 퀴즈")
         print("=" * 40)
+        if self.loaded:
+            print(f"저장된 데이터를 불러왔습니다. (퀴즈 {len(self.quizzes)}개, 최고점수 {self.best_score}점)")
+            print("=" * 40)
 
     def show_menu(self):
         print("1. 퀴즈 풀기")
@@ -84,6 +86,8 @@ class QuizGame:
             print("새로운 최고 점수입니다!")
         print("=" * 40 + "\n")
 
+        self.save()
+
     def add_quiz(self):
         """새 퀴즈를 입력받아 목록에 넣고 파일에 저장한다."""
         print("\n새로운 퀴즈를 추가합니다.\n")
@@ -95,6 +99,7 @@ class QuizGame:
         answer = ask_number("정답 번호 (1-4): ", 1, 4)
 
         self.quizzes.append(Quiz(question, choices, answer))
+        self.save()
         print(f"\n퀴즈가 추가되었습니다! (현재 {len(self.quizzes)}개)\n")
 
     def list_quizzes(self):
@@ -116,6 +121,10 @@ class QuizGame:
             return
         print(f"\n최고 점수: {self.best_score}점\n")
 
+    def save(self):
+        """현재 퀴즈 목록과 최고 점수를 state.json에 저장한다."""
+        return storage.save_state(self.quizzes, self.best_score)
+
     def run(self):
         self.show_title()
         while True:
@@ -131,5 +140,6 @@ class QuizGame:
             elif picked == 4:
                 self.show_score()
             elif picked == 5:
-                print("\n게임을 종료합니다.\n")
+                self.save()
+                print("\n게임을 종료합니다. 데이터를 저장했습니다.\n")
                 break

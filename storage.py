@@ -1,6 +1,13 @@
-"""기본 퀴즈 데이터를 담아 두는 모듈."""
+"""기본 퀴즈 데이터와 state.json 읽기/쓰기를 담당하는 모듈."""
+
+import json
+import os
 
 from quiz import Quiz
+
+# 실행 위치와 상관없이 프로젝트 루트의 state.json을 가리키도록 절대경로로 만든다.
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+STATE_FILE = os.path.join(BASE_DIR, "state.json")
 
 # 주제: 이산수학 기초
 DEFAULT_QUIZ_DATA = [
@@ -48,3 +55,37 @@ def make_default_quizzes():
     for data in DEFAULT_QUIZ_DATA:
         quizzes.append(Quiz(data["question"], data["choices"], data["answer"]))
     return quizzes
+
+
+def load_state():
+    """state.json에서 퀴즈 목록과 최고 점수를 읽어온다.
+
+    파일이 없으면 기본 퀴즈로 시작한다.
+    돌려주는 값: (퀴즈 목록, 최고 점수, 불러오기 성공 여부)
+    """
+    if not os.path.exists(STATE_FILE):
+        return make_default_quizzes(), 0, False
+
+    with open(STATE_FILE, "r", encoding="utf-8") as f:
+        state = json.load(f)
+
+    quizzes = []
+    for data in state["quizzes"]:
+        quizzes.append(Quiz(data["question"], data["choices"], data["answer"]))
+    best_score = int(state["best_score"])
+
+    return quizzes, best_score, True
+
+
+def save_state(quizzes, best_score):
+    """퀴즈 목록과 최고 점수를 state.json에 UTF-8로 저장한다."""
+    state = {
+        "quizzes": [
+            {"question": q.question, "choices": q.choices, "answer": q.answer}
+            for q in quizzes
+        ],
+        "best_score": best_score,
+    }
+    with open(STATE_FILE, "w", encoding="utf-8") as f:
+        json.dump(state, f, ensure_ascii=False, indent=2)
+    return True
