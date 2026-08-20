@@ -7,6 +7,7 @@ import storage
 from quiz import Quiz
 
 HINT_PENALTY = 5   # 힌트 한 번당 깎는 점수
+CHOICE_COUNT = 4   # 문제 하나가 갖는 선택지 개수
 
 
 def ask_number(prompt, low, high):
@@ -83,7 +84,7 @@ class QuizGame:
 
             used_hint = False
             while True:
-                picked = ask_number("정답 입력 (0: 힌트): ", 0, 4)
+                picked = ask_number("정답 입력 (0: 힌트): ", 0, CHOICE_COUNT)
                 if picked != 0:
                     break
                 quiz.show_hint()
@@ -125,9 +126,9 @@ class QuizGame:
 
         question = ask_text("문제를 입력하세요: ")
         choices = []
-        for i in range(1, 5):
+        for i in range(1, CHOICE_COUNT + 1):
             choices.append(ask_text(f"선택지 {i}: "))
-        answer = ask_number("정답 번호 (1-4): ", 1, 4)
+        answer = ask_number(f"정답 번호 (1-{CHOICE_COUNT}): ", 1, CHOICE_COUNT)
         hint = input("힌트 (없으면 그냥 Enter): ").strip()
 
         self.quizzes.append(Quiz(question, choices, answer, hint))
