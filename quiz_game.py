@@ -1,5 +1,7 @@
 """메뉴 흐름과 게임 진행을 담당하는 모듈."""
 
+import random
+
 import storage
 from quiz import Quiz
 
@@ -59,16 +61,19 @@ class QuizGame:
         print("=" * 40)
 
     def play(self):
-        """저장된 퀴즈를 순서대로 출제하고 점수를 계산한다."""
+        """문제 수를 고르고, 무작위 순서로 출제해 점수를 계산한다."""
         if not self.quizzes:
             print("\n등록된 퀴즈가 없습니다. 먼저 퀴즈를 추가해 주세요.\n")
             return
 
         total = len(self.quizzes)
-        print(f"\n퀴즈를 시작합니다! (총 {total}문제)\n")
+        count = ask_number(f"\n문제 몇 개 풀까요? (1-{total}): ", 1, total)
+        picked_quizzes = random.sample(self.quizzes, count)
+
+        print(f"\n퀴즈를 시작합니다! (총 {count}문제)\n")
 
         correct = 0
-        for number, quiz in enumerate(self.quizzes, start=1):
+        for number, quiz in enumerate(picked_quizzes, start=1):
             quiz.show(number)
             picked = ask_number("정답 입력: ", 1, 4)
             if quiz.is_correct(picked):
@@ -77,9 +82,9 @@ class QuizGame:
             else:
                 print(f"오답입니다. 정답은 {quiz.answer}번입니다.\n")
 
-        score = round(correct / total * 100)
+        score = round(correct / count * 100)
         print("=" * 40)
-        print(f"결과: {total}문제 중 {correct}문제 정답! ({score}점)")
+        print(f"결과: {count}문제 중 {correct}문제 정답! ({score}점)")
 
         if score > self.best_score:
             self.best_score = score
