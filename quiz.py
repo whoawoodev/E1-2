@@ -27,3 +27,11 @@ class Quiz:
     def is_correct(self, picked):
         """사용자가 고른 번호가 정답인지 알려준다."""
         return picked == self.answer
+
+    def to_dict(self):
+        """state.json에 저장할 수 있는 형태로 바꾼다."""
+        return {
+            "question": self.question,
+            "choices": self.choices,
+            "answer": self.answer,
+        }

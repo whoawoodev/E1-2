@@ -80,10 +80,7 @@ def load_state():
 def save_state(quizzes, best_score):
     """퀴즈 목록과 최고 점수를 state.json에 UTF-8로 저장한다."""
     state = {
-        "quizzes": [
-            {"question": q.question, "choices": q.choices, "answer": q.answer}
-            for q in quizzes
-        ],
+        "quizzes": [q.to_dict() for q in quizzes],
         "best_score": best_score,
     }
     with open(STATE_FILE, "w", encoding="utf-8") as f:
