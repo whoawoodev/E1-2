@@ -60,21 +60,30 @@ def make_default_quizzes():
 def load_state():
     """state.json에서 퀴즈 목록과 최고 점수를 읽어온다.
 
-    파일이 없으면 기본 퀴즈로 시작한다.
+    파일이 없으면 기본 퀴즈로 시작하고,
+    파일이 깨져 있으면 안내한 뒤 기본 퀴즈로 복구한다.
     돌려주는 값: (퀴즈 목록, 최고 점수, 불러오기 성공 여부)
     """
     if not os.path.exists(STATE_FILE):
         return make_default_quizzes(), 0, False
 
-    with open(STATE_FILE, "r", encoding="utf-8") as f:
-        state = json.load(f)
+    try:
+        with open(STATE_FILE, "r", encoding="utf-8") as f:
+            state = json.load(f)
 
-    quizzes = []
-    for data in state["quizzes"]:
-        quizzes.append(Quiz(data["question"], data["choices"], data["answer"]))
-    best_score = int(state["best_score"])
+        quizzes = []
+        for data in state["quizzes"]:
+            quizzes.append(Quiz(data["question"], data["choices"], data["answer"]))
+        best_score = int(state["best_score"])
 
-    return quizzes, best_score, True
+        if not quizzes:
+            raise ValueError("저장된 퀴즈가 하나도 없습니다.")
+
+        return quizzes, best_score, True
+
+    except (json.JSONDecodeError, KeyError, TypeError, ValueError, OSError):
+        print("저장 파일을 읽을 수 없어 기본 퀴즈로 시작합니다.")
+        return make_default_quizzes(), 0, False
 
 
 def save_state(quizzes, best_score):
@@ -83,6 +92,10 @@ def save_state(quizzes, best_score):
         "quizzes": [q.to_dict() for q in quizzes],
         "best_score": best_score,
     }
-    with open(STATE_FILE, "w", encoding="utf-8") as f:
-        json.dump(state, f, ensure_ascii=False, indent=2)
-    return True
+    try:
+        with open(STATE_FILE, "w", encoding="utf-8") as f:
+            json.dump(state, f, ensure_ascii=False, indent=2)
+        return True
+    except OSError:
+        print("저장에 실패했습니다.")
+        return False
