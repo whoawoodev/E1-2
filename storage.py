@@ -15,21 +15,25 @@ DEFAULT_QUIZ_DATA = [
         "question": "서로 다른 책 3권을 일렬로 나열하는 방법은 모두 몇 가지인가?",
         "choices": ["3가지", "6가지", "8가지", "9가지"],
         "answer": 2,
+        "hint": "첫 자리에 3권 중 하나, 다음 자리에 남은 2권 중 하나를 놓아 봅니다.",
     },
     {
         "question": "두 집합 A = {1, 2, 3}, B = {3, 4, 5}의 교집합은?",
         "choices": ["{1, 2}", "{3}", "{1, 2, 3, 4, 5}", "공집합"],
         "answer": 2,
+        "hint": "두 집합에 공통으로 들어 있는 원소만 모읍니다.",
     },
     {
         "question": "원소가 3개인 집합의 부분집합은 모두 몇 개인가?",
         "choices": ["3개", "6개", "8개", "9개"],
         "answer": 3,
+        "hint": "원소마다 넣는다/안 넣는다 두 가지 선택이 있습니다.",
     },
     {
         "question": "두 명제가 모두 참일 때만 결과가 참이 되는 논리 연산은?",
         "choices": ["논리합(OR)", "논리곱(AND)", "부정(NOT)", "배타적 논리합(XOR)"],
         "answer": 2,
+        "hint": "우리말 '그리고'에 해당하는 연산입니다.",
     },
     {
         "question": "명제 \"P이면 Q이다\"의 역(逆)은?",
@@ -40,11 +44,13 @@ DEFAULT_QUIZ_DATA = [
             "P이고 Q이다",
         ],
         "answer": 1,
+        "hint": "가정과 결론의 자리를 서로 바꾼 것입니다.",
     },
     {
         "question": "명제 변수가 2개일 때 진리표의 행은 모두 몇 개인가?",
         "choices": ["2개", "3개", "4개", "8개"],
         "answer": 3,
+        "hint": "변수 하나가 참/거짓 두 가지 값을 가집니다.",
     },
 ]
 
@@ -53,12 +59,12 @@ def make_default_quizzes():
     """기본 퀴즈 데이터를 Quiz 객체 목록으로 만들어 돌려준다."""
     quizzes = []
     for data in DEFAULT_QUIZ_DATA:
-        quizzes.append(Quiz(data["question"], data["choices"], data["answer"]))
+        quizzes.append(Quiz(data["question"], data["choices"], data["answer"], data["hint"]))
     return quizzes
 
 
 def load_state():
-    """state.json에서 퀴즈 목록과 최고 점수를 읽어온다.
+    """state.json에서 퀴즈 목록, 최고 점수, 게임 기록을 읽어온다.
 
     파일이 없으면 기본 퀴즈로 시작하고,
     파일이 깨져 있으면 안내한 뒤 기본 퀴즈로 복구한다.
@@ -73,7 +79,9 @@ def load_state():
 
         quizzes = []
         for data in state["quizzes"]:
-            quizzes.append(Quiz(data["question"], data["choices"], data["answer"]))
+            # hint는 나중에 추가한 항목이라, 없는 파일도 읽을 수 있게 기본값을 준다.
+            quizzes.append(Quiz(data["question"], data["choices"], data["answer"],
+                                data.get("hint", "")))
         best_score = int(state["best_score"])
 
         if not quizzes:

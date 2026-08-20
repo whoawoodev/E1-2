@@ -5,6 +5,8 @@ import random
 import storage
 from quiz import Quiz
 
+HINT_PENALTY = 5   # 힌트 한 번당 깎는 점수
+
 
 def ask_number(prompt, low, high):
     """low~high 사이의 정수를 받을 때까지 다시 묻는다."""
@@ -70,21 +72,37 @@ class QuizGame:
         count = ask_number(f"\n문제 몇 개 풀까요? (1-{total}): ", 1, total)
         picked_quizzes = random.sample(self.quizzes, count)
 
-        print(f"\n퀴즈를 시작합니다! (총 {count}문제)\n")
+        print(f"\n퀴즈를 시작합니다! (총 {count}문제, 정답 대신 0을 누르면 힌트)\n")
 
         correct = 0
+        hint_count = 0
         for number, quiz in enumerate(picked_quizzes, start=1):
             quiz.show(number)
-            picked = ask_number("정답 입력: ", 1, 4)
+
+            used_hint = False
+            while True:
+                picked = ask_number("정답 입력 (0: 힌트): ", 0, 4)
+                if picked != 0:
+                    break
+                quiz.show_hint()
+                if quiz.hint and not used_hint:
+                    used_hint = True
+                    hint_count += 1
+
             if quiz.is_correct(picked):
                 print("정답입니다!\n")
                 correct += 1
             else:
                 print(f"오답입니다. 정답은 {quiz.answer}번입니다.\n")
 
-        score = round(correct / count * 100)
+        base_score = round(correct / count * 100)
+        penalty = hint_count * HINT_PENALTY
+        score = max(base_score - penalty, 0)
+
         print("=" * 40)
-        print(f"결과: {count}문제 중 {correct}문제 정답! ({score}점)")
+        print(f"결과: {count}문제 중 {correct}문제 정답! ({base_score}점)")
+        if penalty:
+            print(f"힌트 {hint_count}회 사용 → {penalty}점 차감, 최종 {score}점")
 
         if score > self.best_score:
             self.best_score = score
@@ -102,8 +120,9 @@ class QuizGame:
         for i in range(1, 5):
             choices.append(ask_text(f"선택지 {i}: "))
         answer = ask_number("정답 번호 (1-4): ", 1, 4)
+        hint = input("힌트 (없으면 그냥 Enter): ").strip()
 
-        self.quizzes.append(Quiz(question, choices, answer))
+        self.quizzes.append(Quiz(question, choices, answer, hint))
         self.save()
         print(f"\n퀴즈가 추가되었습니다! (현재 {len(self.quizzes)}개)\n")
 
