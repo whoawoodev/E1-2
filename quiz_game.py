@@ -1,5 +1,7 @@
 """메뉴 흐름과 게임 진행을 담당하는 모듈."""
 
+import storage
+
 
 def ask_number(prompt, low, high):
     """low~high 사이의 정수를 받을 때까지 다시 묻는다."""
@@ -37,8 +39,7 @@ class QuizGame:
     """퀴즈 목록과 최고 점수를 들고 게임 전체를 진행하는 클래스."""
 
     def __init__(self):
-        # 아직 퀴즈 데이터가 없으므로 빈 목록으로 시작한다.
-        self.quizzes = []
+        self.quizzes = storage.make_default_quizzes()
         self.best_score = 0
 
     def show_title(self):
