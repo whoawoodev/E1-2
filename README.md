@@ -178,7 +178,8 @@ E1-2/
 
 - 복제본에서 수정한 내용을 원래 작업 폴더로 pull 받아 확인했습니다.
 
-`git log --oneline --graph` 결과입니다. 커밋 22개와 `feature/play` 갈래가 병합된 자리가 그래프로 남아 있습니다.
+`git log --oneline --graph` 결과입니다(캡처 시점 기준 22개, 이후 문서 커밋이 더해졌습니다).
+`feature/play` 갈래가 병합된 자리가 그래프에 그대로 남아 있습니다.
 
 ![git log --oneline --graph](docs/screenshots/10_git_log.png)
 
@@ -258,7 +259,7 @@ def main():
 여러 기능을 한 커밋에 묶으면 하나만 되돌릴 방법이 없습니다.
 
 메시지는 **접두어 + 변경 요약**으로 통일했습니다.
-`Feat:` 새 기능(12개) / `Fix:` 예외 처리 보강(1개) / `Docs:` 문서(5개) / `Refactor:` 동작은 그대로 두고 코드 정리(2개).
+`Feat:` 새 기능(12개) / `Fix:` 예외 처리 보강(1개) / `Docs:` 문서(8개) / `Refactor:` 동작은 그대로 두고 코드 정리(2개).
 
 `Refactor`를 쓴 곳은 두 군데입니다. 저장 형태로 바꾸는 코드를 `storage`에서 `Quiz.to_dict()`로 옮긴 커밋과,
 선택지 개수를 `CHOICE_COUNT` 상수로 분리한 커밋입니다.
