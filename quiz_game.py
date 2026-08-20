@@ -93,6 +93,18 @@ class QuizGame:
         self.quizzes.append(Quiz(question, choices, answer))
         print(f"\n퀴즈가 추가되었습니다! (현재 {len(self.quizzes)}개)\n")
 
+    def list_quizzes(self):
+        """등록된 퀴즈의 문제 문장을 번호와 함께 보여준다."""
+        if not self.quizzes:
+            print("\n등록된 퀴즈가 없습니다.\n")
+            return
+
+        print(f"\n등록된 퀴즈 목록 (총 {len(self.quizzes)}개)\n")
+        print("-" * 40)
+        for number, quiz in enumerate(self.quizzes, start=1):
+            print(f"[{number}] {quiz.question}")
+        print("-" * 40 + "\n")
+
     def run(self):
         self.show_title()
         while True:
@@ -104,7 +116,7 @@ class QuizGame:
             elif picked == 2:
                 self.add_quiz()
             elif picked == 3:
-                print("\n아직 준비 중인 기능입니다.\n")
+                self.list_quizzes()
             elif picked == 4:
                 print("\n아직 준비 중인 기능입니다.\n")
             elif picked == 5:
