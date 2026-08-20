@@ -56,7 +56,11 @@ class QuizGame:
         print("=" * 40)
 
     def play(self):
-        """저장된 퀴즈를 순서대로 출제하고 정답 여부를 알려준다."""
+        """저장된 퀴즈를 순서대로 출제하고 점수를 계산한다."""
+        if not self.quizzes:
+            print("\n등록된 퀴즈가 없습니다. 먼저 퀴즈를 추가해 주세요.\n")
+            return
+
         total = len(self.quizzes)
         print(f"\n퀴즈를 시작합니다! (총 {total}문제)\n")
 
@@ -70,7 +74,10 @@ class QuizGame:
             else:
                 print(f"오답입니다. 정답은 {quiz.answer}번입니다.\n")
 
-        print(f"맞힌 개수: {correct} / {total}\n")
+        score = round(correct / total * 100)
+        print("=" * 40)
+        print(f"결과: {total}문제 중 {correct}문제 정답! ({score}점)")
+        print("=" * 40 + "\n")
 
     def run(self):
         self.show_title()
