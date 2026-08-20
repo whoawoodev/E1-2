@@ -55,6 +55,23 @@ class QuizGame:
         print("5. 종료")
         print("=" * 40)
 
+    def play(self):
+        """저장된 퀴즈를 순서대로 출제하고 정답 여부를 알려준다."""
+        total = len(self.quizzes)
+        print(f"\n퀴즈를 시작합니다! (총 {total}문제)\n")
+
+        correct = 0
+        for number, quiz in enumerate(self.quizzes, start=1):
+            quiz.show(number)
+            picked = ask_number("정답 입력: ", 1, 4)
+            if quiz.is_correct(picked):
+                print("정답입니다!\n")
+                correct += 1
+            else:
+                print(f"오답입니다. 정답은 {quiz.answer}번입니다.\n")
+
+        print(f"맞힌 개수: {correct} / {total}\n")
+
     def run(self):
         self.show_title()
         while True:
@@ -62,7 +79,7 @@ class QuizGame:
             picked = ask_number("선택: ", 1, 5)
 
             if picked == 1:
-                print("\n아직 준비 중인 기능입니다.\n")
+                self.play()
             elif picked == 2:
                 print("\n아직 준비 중인 기능입니다.\n")
             elif picked == 3:
